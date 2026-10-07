@@ -1,0 +1,1271 @@
+/* Lessons use the original three-column composition, with one screen per slide. */
+.lesson-shell {
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 72px minmax(0, 1fr);
+  overflow: hidden;
+}
+.lesson-shell > .footer {
+  display: none;
+}
+.lesson-shell .header {
+  height: 72px;
+  min-height: 0;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 235px minmax(0, 1fr) auto;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+.lesson-shell .brand {
+  min-width: 0;
+  gap: 10px;
+}
+.lesson-shell .brand-name {
+  font-size: 22px;
+}
+.lesson-shell .brand-tagline {
+  font-size: 7px;
+}
+.lesson-shell .sun-seal {
+  width: 39px;
+  height: 39px;
+}
+.lesson-shell .top-nav {
+  display: flex;
+  order: 0;
+  height: 100%;
+  width: auto;
+  justify-content: center;
+  gap: clamp(14px, 1.6vw, 26px);
+}
+.lesson-shell .top-nav a {
+  font-size: 14px;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+.lesson-shell .top-nav a.active:after {
+  bottom: 15px;
+}
+.lesson-shell .profile-label {
+  font-size: 12px;
+}
+.lesson-shell .reading-layout {
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 185px minmax(0, 1fr) 290px;
+}
+.lesson-shell .sidebar {
+  min-height: 0;
+  padding: 24px 12px 0;
+}
+.lesson-shell .sidebar h2 {
+  font-size: 23px;
+}
+.lesson-shell .sidebar > div > p:not(.serif-quote) {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.lesson-shell .sidebar nav {
+  gap: 5px;
+  margin-top: 24px;
+}
+.lesson-shell .sidebar nav a {
+  font-size: 13px;
+  min-height: 42px;
+  padding: 10px;
+  line-height: 1.5;
+  gap: 9px;
+}
+.lesson-shell .sidebar .sidebar-group-toggle {
+  position: relative;
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #55657b;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+}
+.lesson-shell .sidebar .sidebar-group-toggle > span {
+  flex: 1;
+}
+.lesson-shell .sidebar .sidebar-group-toggle:hover {
+  background: #f0eee6;
+}
+.lesson-shell .sidebar .sidebar-group-toggle.active {
+  color: #07566b;
+  background: #e6f1f1;
+  font-weight: 600;
+}
+.lesson-shell .sidebar .sidebar-group-toggle.active:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  bottom: 9px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--teal);
+}
+.lesson-shell .sidebar .sidebar-group-toggle > svg:last-child {
+  flex: 0 0 auto;
+  transition: transform 160ms ease;
+}
+.lesson-shell .sidebar .sidebar-group-toggle.expanded > svg:last-child {
+  transform: rotate(180deg);
+}
+.lesson-shell .sidebar-subnav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-left: 12px;
+  padding-left: 6px;
+  border-left: 1px solid #e4dfd2;
+}
+.lesson-shell .sidebar-subnav a {
+  min-height: 36px;
+  padding: 7px 6px;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: normal;
+}
+.lesson-shell .mobile-learn-actions {
+  display: none;
+}
+.lesson-shell .sidebar-bottom {
+  padding-top: 16px;
+}
+.lesson-shell .sidebar-bottom > .serif-quote {
+  font-size: 13px;
+}
+.lesson-shell .sidebar-bottom .temple-art {
+  max-height: 135px;
+  margin-bottom: 12px;
+}
+.lesson-shell .reading-layout .lesson-main {
+  height: 100%;
+  min-height: 0;
+  padding: 20px 26px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.lesson-shell .lesson-topline {
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+.lesson-shell .reading-layout .topic-switch button {
+  font-size: 13px;
+  padding: 6px 12px;
+}
+.lesson-shell .reading-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lesson-shell .example-toggle,
+.lesson-shell .back-to-slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #087783;
+  font-size: 13px;
+  white-space: nowrap;
+  padding: 7px 3px;
+  min-height: 34px;
+}
+.lesson-shell .example-toggle[aria-pressed="true"] {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.lesson-shell .reading-size-field select {
+  font-size: 12px;
+  width: 70px;
+  height: 32px;
+  padding: 3px 4px;
+  background: transparent;
+  border-color: #e1e2dc;
+}
+.lesson-shell .reading-focus {
+  width: 30px;
+  height: 34px;
+  min-height: 0;
+  margin: 0;
+  justify-content: center;
+}
+.lesson-shell .reading-layout .page-title {
+  flex: 0 0 auto;
+  margin-bottom: 16px;
+}
+.lesson-shell .reading-layout .lesson-main h1 {
+  font-size: 29px;
+  line-height: 1.25;
+}
+.lesson-shell .reading-layout .lesson-main .page-title p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.lesson-shell .reading-layout .lesson-slide {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+.lesson-shell .lesson-description {
+  flex-shrink: 0;
+}
+.lesson-shell .reading-layout .lesson-description h2 {
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 7px;
+  letter-spacing: 0;
+}
+.lesson-shell .reading-layout .lesson-description p {
+  font-size: var(--reading-size);
+  line-height: 1.55;
+  max-width: 72ch;
+  color: #4d5d73;
+}
+.lesson-shell .slide-visual {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  container-type: size;
+  container-name: lesson-art;
+  margin-top: 8px;
+}
+.lesson-shell .reading-layout .lesson-stage {
+  width: min(100%, 660px);
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.lesson-shell .slide-visual .wheel-wrap {
+  width: min(100cqw, calc(100cqh - 44px), 500px);
+  max-width: none;
+  margin: 0 auto;
+}
+.lesson-shell .reading-layout .sky-overview {
+  padding: 0;
+}
+.lesson-shell .slide-visual .zodiac-wheel {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+}
+.lesson-shell .slide-visual .wheel-caption {
+  margin: -6px 0 0;
+  font-size: 12px;
+  min-height: 22px;
+}
+.lesson-shell .reading-layout .lesson-controls {
+  flex: 0 0 auto;
+  position: static;
+  padding: 12px 0 4px;
+  margin-top: 6px;
+  background: transparent;
+  backdrop-filter: none;
+}
+.lesson-shell .reading-layout .lesson-controls .button {
+  min-height: 42px;
+  padding: 9px 16px;
+  font-size: 15px;
+}
+.lesson-shell .reading-layout .lesson-pagination {
+  font-size: 14px;
+  gap: 5px;
+}
+.lesson-shell .reading-layout .source-note {
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 5px;
+}
+.lesson-shell .slide-example-view {
+  margin: auto 0;
+  padding: 12px 0;
+}
+.lesson-shell .reading-layout .lesson-example {
+  margin: 0;
+  border: 0;
+  border-left: 2px solid #baa06c;
+  border-radius: 0;
+  padding: 18px 22px;
+  background: #f7f5ec;
+  gap: 12px;
+}
+.lesson-shell .reading-layout .lesson-example > svg {
+  flex-shrink: 0;
+  color: #a0844b;
+}
+.lesson-shell .reading-layout .lesson-example strong {
+  font-size: 15px;
+}
+.lesson-shell .reading-layout .lesson-example p {
+  font-size: var(--reading-size);
+  line-height: 1.6;
+  margin-top: 7px;
+}
+.lesson-shell .slide-takeaway {
+  padding-top: 18px;
+  margin-top: 12px;
+  gap: 10px;
+}
+.lesson-shell .slide-takeaway p {
+  font-size: var(--reading-size);
+  line-height: 1.6;
+}
+.lesson-shell .back-to-slide {
+  font-size: 14px;
+  margin-top: 16px;
+}
+.lesson-shell .reading-layout .right-rail {
+  min-height: 0;
+  height: 100%;
+  padding: 20px 18px 14px 0;
+  gap: 12px;
+}
+.lesson-shell .right-rail .tutor-panel {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 13px 12px;
+  overflow: hidden;
+}
+.lesson-shell .right-rail .tutor-heading strong {
+  font-size: 16px;
+}
+.lesson-shell .right-rail .tutor-heading small {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.lesson-shell .right-rail .tutor-messages {
+  flex: 1 1 0;
+  min-height: 40px;
+  max-height: none;
+  margin: 18px -2px 12px;
+}
+.lesson-shell .right-rail .chat-label {
+  font-size: 11px;
+}
+.lesson-shell .right-rail .chat-bubble {
+  font-size: 14px;
+  line-height: 1.65;
+  padding: 10px;
+}
+.lesson-shell .right-rail .suggested-questions {
+  gap: 6px;
+  margin: 0 0 12px 0;
+}
+.lesson-shell .right-rail .suggested-questions button {
+  font-size: 12px;
+  padding: 7px 9px;
+  line-height: 1.4;
+}
+.lesson-shell .right-rail .tutor-input input {
+  height: 34px;
+  font-size: 13px;
+}
+.lesson-shell .right-rail .tutor-footnote {
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 7px;
+}
+.lesson-shell .right-rail .tutor-full-link {
+  flex: 0 0 auto;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+.lesson-shell .right-rail .context-card {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  position: relative;
+}
+.lesson-shell .right-rail .context-card > .small-label,
+.lesson-shell .right-rail .context-card > p {
+  display: none;
+}
+.lesson-shell .right-rail .context-card details {
+  margin: 0;
+}
+.lesson-shell .right-rail .context-card summary {
+  font-size: 12px;
+  padding: 4px 0;
+}
+.lesson-shell .right-rail .context-card dl {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  max-height: min(350px, 55dvh);
+  overflow-y: auto;
+  z-index: 8;
+  border: 1px solid #ddd8c9;
+  border-radius: 5px;
+  padding: 12px;
+  background: #fffdf7;
+  box-shadow: 0 6px 20px #172b4d14;
+}
+.lesson-shell .right-rail .context-card dt {
+  font-size: 14px;
+}
+.lesson-shell .right-rail .context-card dd {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.lesson-shell .right-rail .side-cta {
+  margin: 0;
+  padding: 8px 0;
+}
+.lesson-shell .side-cta strong {
+  font-size: 14px;
+}
+.lesson-shell .side-cta small {
+  font-size: 11px;
+}
+.lesson-shell .reading-layout.focus-reading {
+  grid-template-columns: minmax(0, 1fr);
+}
+.lesson-shell .focus-reading .lesson-main {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+
+/* Illustration scale follows the available slide space, leaving reading text intact. */
+.lesson-shell .slide-visual .large-symbol-key {
+  gap: 8px;
+}
+.lesson-shell .slide-visual .large-symbol-key > div {
+  min-width: 45px;
+  padding: 12px 6px;
+  gap: 0;
+}
+.lesson-shell .slide-visual .large-symbol-key strong {
+  font-size: clamp(30px, 18cqh, 54px);
+}
+.lesson-shell .slide-visual .large-symbol-key span {
+  font-size: 18px;
+  margin-top: 6px;
+}
+.lesson-shell .slide-visual .visual-comparisons {
+  gap: 32px;
+}
+.lesson-shell .slide-visual .visual-comparisons > div {
+  gap: 12px;
+  font-size: 22px;
+}
+.lesson-shell .slide-visual .worked-number {
+  padding: 0 0 12px;
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+.lesson-shell .slide-visual .worked-number > .ancient-text {
+  font-size: clamp(32px, 20cqh, 70px);
+  letter-spacing: 1px;
+}
+.lesson-shell .slide-visual .worked-number > strong {
+  font-size: clamp(25px, 14cqh, 42px);
+}
+.lesson-shell .slide-visual .worked-number > span:not(.ancient-text) {
+  font-size: 26px;
+}
+.lesson-shell .slide-visual .place-value-visual {
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+.lesson-shell .slide-visual .place-value-visual > div {
+  min-width: 70px;
+  padding: 8px 12px;
+  gap: 3px;
+  border-radius: 3px;
+}
+.lesson-shell .slide-visual .place-value-visual span {
+  font-size: 15px;
+}
+.lesson-shell .slide-visual .place-value-visual strong {
+  font-size: 27px;
+}
+.lesson-shell .slide-visual .number-breakdown {
+  font-size: 20px;
+  line-height: 1.5;
+}
+.lesson-shell .slide-visual .subtraction-pairs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.lesson-shell .slide-visual .subtraction-pairs > div {
+  padding: 12px;
+  border-radius: 3px;
+}
+.lesson-shell .slide-visual .subtraction-pairs strong {
+  font-size: 30px;
+}
+.lesson-shell .slide-visual .subtraction-pairs span {
+  font-size: 20px;
+}
+.lesson-shell .slide-visual .counting-comparison {
+  gap: 12px;
+}
+.lesson-shell .slide-visual .counting-comparison > div {
+  padding: 12px;
+  gap: 4px;
+}
+.lesson-shell .slide-visual .counting-comparison span {
+  font-size: 16px;
+}
+.lesson-shell .slide-visual .counting-comparison strong {
+  font-size: 26px;
+}
+.lesson-shell .slide-visual .clock-visual,
+.lesson-shell .slide-visual .era-visual {
+  gap: 12px;
+}
+.lesson-shell .slide-visual .clock-visual > svg {
+  width: 60px;
+  height: 60px;
+}
+.lesson-shell .slide-visual .era-visual > svg {
+  width: 32px;
+  height: 32px;
+}
+.lesson-shell .slide-visual .clock-visual strong,
+.lesson-shell .slide-visual .era-visual strong {
+  font-size: 26px;
+}
+.lesson-shell .slide-visual .clock-visual p,
+.lesson-shell .slide-visual .era-visual p {
+  font-size: 20px;
+}
+.lesson-shell .slide-visual .number-playground {
+  font-size: 15px;
+  margin-top: 12px;
+  gap: 3px;
+}
+.lesson-shell .slide-visual .number-playground input {
+  height: 23px;
+}
+.lesson-shell .slide-visual .number-playground output {
+  font-size: 23px;
+}
+.lesson-shell .slide-visual .mayan-number {
+  gap: 5px;
+}
+.lesson-shell .slide-visual .mayan-level {
+  min-height: 0;
+  padding: 3px;
+  gap: 3px;
+}
+.lesson-shell .slide-visual .mayan-bars {
+  gap: 3px;
+}
+.lesson-shell .slide-visual .mayan-bars i {
+  height: 5px;
+}
+.lesson-shell .slide-visual .mayan-dots i {
+  width: 8px;
+  height: 8px;
+}
+.lesson-shell .slide-visual .babylonian-number {
+  flex-wrap: nowrap;
+  gap: 14px;
+}
+.lesson-shell .slide-visual .ecliptic-stage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lesson-shell .slide-visual .ecliptic-stage svg {
+  width: 100%;
+  height: calc(100% - 45px);
+  min-height: 0;
+  max-height: 300px;
+}
+.lesson-shell .slide-visual .ecliptic-stage > strong {
+  font-size: 25px;
+}
+.lesson-shell .slide-visual .sign-study {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lesson-shell .slide-visual .sign-study-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.lesson-shell .slide-visual .sign-study-grid button {
+  padding: clamp(3px, 2cqh, 10px) 4px;
+  gap: 2px;
+  border-radius: 3px;
+}
+.lesson-shell .slide-visual .sign-study-grid strong {
+  font-size: clamp(20px, 8cqh, 32px);
+}
+.lesson-shell .slide-visual .sign-study-grid span {
+  font-size: 14px;
+}
+.lesson-shell .slide-visual .sign-study > p {
+  margin: 0;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  flex-wrap: wrap;
+}
+.lesson-shell .sign-study p .sign-study-range {
+  flex-basis: 100%;
+  font-family: "DM Sans", "Noto Sans Thai", sans-serif;
+  font-size: 13px;
+  color: #5f738a;
+  text-align: center;
+}
+.lesson-shell .slide-visual .planet-study {
+  gap: 16px;
+  flex-wrap: nowrap;
+}
+.lesson-shell .slide-visual .planet-study > div {
+  min-width: 0;
+  padding: 14px 6px;
+  gap: 8px;
+}
+.lesson-shell .slide-visual .planet-study strong {
+  font-size: clamp(35px, 22cqh, 68px);
+}
+.lesson-shell .slide-visual .planet-study span {
+  font-size: 20px;
+}
+.lesson-shell .slide-visual .node-study {
+  gap: 18px;
+}
+.lesson-shell .slide-visual .node {
+  font-size: 20px;
+  gap: 4px;
+}
+.lesson-shell .slide-visual .node strong {
+  font-size: clamp(35px, 22cqh, 65px);
+}
+.lesson-shell .slide-visual .lunar-orbit {
+  min-height: 80px;
+  min-width: 120px;
+  gap: 10px;
+}
+.lesson-shell .slide-visual .node-study > p {
+  font-size: 18px;
+}
+.lesson-shell .slide-visual .horizon-study > svg {
+  width: 32px;
+  height: 32px;
+}
+.lesson-shell .slide-visual .horizon-sky {
+  margin-top: 4px;
+}
+.lesson-shell .slide-visual .horizon-sky > span {
+  font-size: clamp(40px, 24cqh, 80px);
+}
+.lesson-shell .slide-visual .horizon-line {
+  margin-bottom: 12px;
+}
+.lesson-shell .slide-visual .horizon-study > strong {
+  font-size: 22px;
+}
+.lesson-shell .slide-visual .horizon-study > p {
+  font-size: 18px;
+  margin-top: 6px;
+}
+.lesson-shell .slide-visual .rhythms-study {
+  gap: 16px;
+}
+.lesson-shell .slide-visual .rhythms-study > div {
+  grid-template-columns: 38px 1fr;
+  gap: 5px 12px;
+}
+.lesson-shell .slide-visual .rhythms-study strong {
+  font-size: 32px;
+}
+.lesson-shell .slide-visual .rhythms-study span {
+  font-size: 20px;
+}
+.lesson-shell .slide-visual .rhythms-study small {
+  font-size: 15px;
+}
+.lesson-shell .slide-visual .rhythms-study i {
+  height: 7px;
+}
+.lesson-shell .slide-visual .temple-record {
+  gap: 12px;
+}
+.lesson-shell .slide-visual .temple-record > div {
+  padding: 20px 7px;
+  gap: 14px;
+}
+.lesson-shell .slide-visual .temple-record span {
+  font-size: 18px;
+}
+.lesson-shell .slide-visual .temple-record strong {
+  font-size: 42px;
+}
+.lesson-shell .slide-visual .eclipse-study {
+  gap: 24px;
+}
+.lesson-shell .slide-visual .eclipse-study > div > strong {
+  font-size: 19px;
+  margin-bottom: 14px;
+}
+.lesson-shell .slide-visual .meaning-study {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+.lesson-shell .slide-visual .meaning-study > div {
+  gap: 12px;
+}
+.lesson-shell .slide-visual .meaning-study strong {
+  font-size: 23px;
+}
+.lesson-shell .slide-visual .meaning-study p {
+  font-size: 18px;
+  line-height: 1.5;
+}
+.lesson-shell .slide-visual .chart-invitation {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.lesson-shell .slide-visual .chart-invitation .wheel-wrap {
+  width: min(100cqw, calc(100cqh - 80px), 460px);
+}
+.lesson-shell .slide-visual .chart-invitation > a {
+  font-size: 16px;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+@media (max-width: 1200px) {
+  .lesson-shell .header {
+    grid-template-columns: 215px minmax(0, 1fr) auto;
+    gap: 14px;
+    padding-inline: 20px;
+  }
+  .lesson-shell .brand-name {
+    font-size: 20px;
+  }
+  .lesson-shell .profile-label {
+    display: none;
+  }
+  .lesson-shell .reading-layout {
+    grid-template-columns: 165px minmax(0, 1fr) 260px;
+  }
+  .lesson-shell .reading-layout .lesson-main {
+    padding-inline: 20px;
+  }
+  .lesson-shell .reading-tools {
+    gap: 5px;
+  }
+  .lesson-shell .reading-layout .topic-switch button {
+    padding-inline: 9px;
+  }
+}
+@media (max-width: 1000px) {
+  .lesson-shell .reading-layout {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+  .lesson-shell .reading-layout > .right-rail {
+    display: none;
+  }
+  .lesson-shell .header {
+    grid-template-columns: 195px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding-inline: 16px;
+  }
+  .lesson-shell .brand-name {
+    font-size: 18px;
+  }
+  .lesson-shell .top-nav {
+    gap: 12px;
+  }
+  .lesson-shell .top-nav a {
+    font-size: 13px;
+  }
+  .lesson-shell .header-actions {
+    gap: 8px;
+  }
+  .lesson-shell .search-toggle {
+    display: none;
+  }
+  .lesson-shell .focus-reading {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .lesson-shell {
+    grid-template-rows: 94px minmax(0, 1fr);
+  }
+  .lesson-shell .header {
+    height: 94px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 51px 43px;
+    gap: 0 10px;
+    padding: 0 14px;
+  }
+  .lesson-shell .brand-name {
+    font-size: 18px;
+  }
+  .lesson-shell .sun-seal {
+    width: 31px;
+    height: 31px;
+  }
+  .lesson-shell .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .lesson-shell .top-nav {
+    grid-row: 2;
+    grid-column: 1/-1;
+    order: 0;
+    height: 43px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .lesson-shell .top-nav a {
+    padding: 0 1px;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: normal;
+  }
+  .lesson-shell .top-nav a.active:after {
+    bottom: 0;
+  }
+  .lesson-shell .reading-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 39px minmax(0, 1fr);
+  }
+  .lesson-shell .reading-layout .sidebar {
+    grid-row: 1;
+    padding: 4px 10px;
+    min-height: 0;
+    height: 39px;
+    border-bottom: 1px solid #e7e4dc;
+    border-right: 0;
+  }
+  .lesson-shell .sidebar > div:first-child,
+  .lesson-shell .sidebar-bottom {
+    display: none;
+  }
+  .lesson-shell .sidebar nav {
+    flex-direction: row;
+    margin: 0;
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .lesson-shell .sidebar nav a {
+    font-size: 12px;
+    min-height: 30px;
+    padding: 5px 9px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .lesson-shell .sidebar .sidebar-group-toggle {
+    width: auto;
+    min-height: 30px;
+    flex: 0 0 auto;
+    padding: 5px 9px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .lesson-shell .sidebar-subnav {
+    display: contents;
+  }
+  .lesson-shell .sidebar-subnav a {
+    min-height: 30px;
+    padding: 5px 9px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .lesson-shell .mobile-learn-actions {
+    display: contents;
+  }
+  .lesson-shell .mobile-learn-actions > a {
+    color: #315c68;
+    background: #f5f4ed;
+  }
+  .lesson-shell .sidebar nav a > svg {
+    width: 14px;
+    height: 14px;
+  }
+  .lesson-shell .sidebar nav a > svg:last-child {
+    display: none;
+  }
+  .lesson-shell .sidebar .sidebar-group-toggle > svg:last-child {
+    display: block;
+    width: 12px;
+    height: 12px;
+  }
+  .lesson-shell .reading-layout .lesson-main {
+    grid-row: 2;
+    padding: 12px 16px 7px;
+  }
+  .lesson-shell .lesson-topline {
+    margin-bottom: 10px;
+  }
+  .lesson-shell .reading-layout .topic-switch {
+    gap: 4px;
+  }
+  .lesson-shell .reading-layout .topic-switch button {
+    font-size: 11px;
+    padding: 5px 7px;
+  }
+  .lesson-shell .reading-tools {
+    gap: 4px;
+  }
+  .lesson-shell .example-toggle {
+    font-size: 12px;
+    min-height: 30px;
+    gap: 3px;
+  }
+  .lesson-shell .example-toggle > svg {
+    width: 14px;
+    height: 14px;
+  }
+  .lesson-shell .reading-size-field select {
+    width: 59px;
+    height: 29px;
+    font-size: 11px;
+  }
+  .lesson-shell .reading-focus {
+    width: 25px;
+    height: 29px;
+  }
+  .lesson-shell .reading-focus > svg {
+    width: 16px;
+    height: 16px;
+  }
+  .lesson-shell .reading-layout .page-title {
+    margin-bottom: 12px;
+  }
+  .lesson-shell .reading-layout .lesson-main h1 {
+    font-size: 25px;
+  }
+  .lesson-shell .reading-layout .lesson-main .page-title p {
+    font-size: 12px;
+  }
+  .lesson-shell .reading-layout .lesson-description h2 {
+    font-size: 19px;
+    line-height: 1.35;
+    margin-bottom: 5px;
+  }
+  .lesson-shell .reading-layout .lesson-description p {
+    line-height: 1.5;
+  }
+  .lesson-shell .reading-layout .lesson-stage {
+    padding: 5px 0;
+  }
+  .lesson-shell .reading-layout .lesson-controls {
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .lesson-shell .reading-layout .lesson-controls .button {
+    font-size: 14px;
+    padding: 8px 12px;
+    min-height: 40px;
+  }
+  .lesson-shell .reading-layout .source-note {
+    font-size: 9px;
+  }
+  .lesson-shell .slide-visual .large-symbol-key {
+    gap: 4px;
+  }
+  .lesson-shell .slide-visual .large-symbol-key > div {
+    min-width: 45px;
+    padding: 8px 5px;
+  }
+  .lesson-shell .slide-visual .large-symbol-key strong {
+    font-size: 32px;
+  }
+  .lesson-shell .slide-visual .large-symbol-key span {
+    font-size: 15px;
+  }
+  .lesson-shell .slide-visual .planet-study {
+    gap: 7px;
+  }
+  .lesson-shell .slide-visual .planet-study span {
+    font-size: 15px;
+  }
+  .lesson-shell .slide-visual .node-study {
+    gap: 12px;
+  }
+  .lesson-shell .slide-visual .node {
+    font-size: 17px;
+  }
+  .lesson-shell .slide-visual .lunar-orbit {
+    min-width: 95px;
+    min-height: 65px;
+    gap: 5px;
+  }
+  .lesson-shell .slide-visual .lunar-orbit > svg {
+    width: 28px;
+    height: 28px;
+  }
+  .lesson-shell .slide-visual .lunar-orbit span {
+    font-size: 18px;
+  }
+  .lesson-shell .slide-visual .node-study > p {
+    font-size: 15px;
+  }
+  .lesson-shell .slide-visual .temple-record {
+    gap: 7px;
+  }
+  .lesson-shell .slide-visual .temple-record > div {
+    padding: 13px 4px;
+    gap: 10px;
+  }
+  .lesson-shell .slide-visual .temple-record span {
+    font-size: 14px;
+  }
+  .lesson-shell .slide-visual .temple-record strong {
+    font-size: 31px;
+  }
+  .lesson-shell .slide-visual .meaning-study {
+    gap: 16px;
+  }
+  .lesson-shell .slide-visual .meaning-study strong {
+    font-size: 20px;
+  }
+  .lesson-shell .slide-visual .meaning-study p {
+    font-size: 16px;
+  }
+  .lesson-shell .slide-visual .chart-invitation > a {
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .lesson-shell .slide-visual .chart-invitation > a > svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .lesson-shell .slide-visual .place-value-visual {
+    gap: 6px;
+  }
+  .lesson-shell .slide-visual .place-value-visual > div {
+    min-width: 65px;
+    padding: 6px;
+  }
+  .lesson-shell .slide-visual .place-value-visual span {
+    font-size: 14px;
+  }
+  .lesson-shell .slide-visual .number-breakdown {
+    font-size: 17px;
+  }
+  .lesson-shell .slide-visual .subtraction-pairs > div {
+    padding: 10px 6px;
+  }
+  .lesson-shell .slide-visual .subtraction-pairs strong {
+    font-size: 25px;
+  }
+  .lesson-shell .slide-visual .subtraction-pairs span {
+    font-size: 18px;
+  }
+  .lesson-shell .slide-visual .worked-number {
+    gap: 12px;
+  }
+  .lesson-shell .slide-visual .babylonian-number {
+    gap: 7px;
+  }
+  .lesson-shell .slide-visual .ten-wedges svg {
+    width: 13px;
+    height: 19px;
+  }
+  .lesson-shell .slide-visual .unit-wedges svg {
+    width: 10px;
+    height: 22px;
+  }
+  .lesson-shell .slide-visual .era-visual strong {
+    font-size: 21px;
+  }
+  .lesson-shell .reading-layout .lesson-example {
+    padding: 13px;
+    gap: 9px;
+  }
+  .lesson-shell .slide-takeaway {
+    margin-top: 10px;
+    padding-top: 12px;
+  }
+  .lesson-shell .focus-reading {
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .lesson-shell .focus-reading .lesson-main {
+    grid-row: 1;
+  }
+}
+@media (max-height: 700px) {
+  .lesson-shell .reading-layout .lesson-main {
+    padding-top: 10px;
+  }
+  .lesson-shell .lesson-topline {
+    margin-bottom: 7px;
+  }
+  .lesson-shell .reading-layout .page-title {
+    margin-bottom: 10px;
+  }
+  .lesson-shell .reading-layout .lesson-main .page-title p {
+    display: none;
+  }
+  .lesson-shell .sidebar > div > p:not(.serif-quote) {
+    display: none;
+  }
+  .lesson-shell .sidebar-bottom > .serif-quote {
+    display: none;
+  }
+  .lesson-shell .right-rail .tutor-heading small {
+    display: none;
+  }
+  .lesson-shell .slide-visual .eclipse-study {
+    gap: 12px;
+  }
+  .lesson-shell .slide-visual .eclipse-study > div > strong {
+    margin-bottom: 8px;
+  }
+  .lesson-shell .slide-visual .celestial-body {
+    width: 48px;
+    height: 48px;
+    font-size: 14px;
+  }
+  .lesson-shell .slide-visual .celestial-body.moon {
+    width: 37px;
+    height: 37px;
+  }
+}
+
+/* Compact the artwork when a larger reading size leaves less vertical room. */
+@container lesson-art (height < 320px) {
+  .lesson-shell .reading-layout .lesson-stage {
+    padding: 5px 8px;
+  }
+  .lesson-shell .slide-visual .numeral-stage.stage-5 {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+  }
+  .lesson-shell .slide-visual .stage-5 .worked-number {
+    padding: 0;
+  }
+  .lesson-shell .slide-visual .stage-5 .place-value-visual > div {
+    padding: 5px 8px;
+    gap: 2px;
+  }
+  .lesson-shell .slide-visual .stage-5 .place-value-visual strong {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+  .lesson-shell .slide-visual .stage-5 .place-value-visual span {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .lesson-shell .slide-visual .number-playground {
+    margin: 0;
+    gap: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .lesson-shell .slide-visual .number-playground input {
+    height: 20px;
+    min-height: 20px;
+    margin: 0;
+  }
+  .lesson-shell .slide-visual .number-playground output {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  .lesson-shell .slide-visual .rhythms-study {
+    gap: 8px;
+  }
+  .lesson-shell .slide-visual .rhythms-study span {
+    font-size: 18px;
+  }
+  .lesson-shell .slide-visual .rhythms-study strong {
+    font-size: 26px;
+  }
+  .lesson-shell .slide-visual .rhythms-study small {
+    font-size: 14px;
+  }
+  .lesson-shell .slide-visual .rhythms-study i {
+    height: 5px;
+  }
+  .lesson-shell .slide-visual .sign-study {
+    gap: 8px;
+  }
+  .lesson-shell .slide-visual .sign-study > p {
+    gap: 4px 10px;
+  }
+  .lesson-shell .slide-visual .sign-study-grid strong {
+    font-size: 22px;
+  }
+  .lesson-shell .slide-visual .sign-study-grid button {
+    padding: 3px;
+  }
+  .lesson-shell .slide-visual .temple-record > div {
+    padding: 12px 5px;
+    gap: 10px;
+  }
+  .lesson-shell .slide-visual .eclipse-study {
+    gap: 12px;
+  }
+  .lesson-shell .slide-visual .eclipse-study > div > strong {
+    margin-bottom: 8px;
+  }
+  .lesson-shell .slide-visual .celestial-body {
+    width: 48px;
+    height: 48px;
+    font-size: 14px;
+  }
+  .lesson-shell .slide-visual .celestial-body.moon {
+    width: 37px;
+    height: 37px;
+  }
+  .lesson-shell .slide-visual .counting-comparison {
+    gap: 8px;
+  }
+  .lesson-shell .slide-visual .counting-comparison > div {
+    padding: 8px 12px;
+    gap: 2px;
+  }
+}

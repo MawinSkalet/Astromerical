@@ -1,0 +1,942 @@
+/* A celestial atlas belongs to the game; the surrounding site keeps its paper UI. */
+.live-quiz {
+  --sky-deep: #08172f;
+  --sky-blue: #173959;
+  --starlight: #f1d89b;
+}
+.celestial-arena {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  overflow: hidden;
+  color: #e4ecf4;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    #153552 0%,
+    #0c203a 42%,
+    #08172f 83%
+  );
+  border-radius: inherit;
+}
+.celestial-atlas {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: "DM Sans", "Noto Sans Thai", sans-serif;
+}
+.celestial-center-title {
+  fill: #f1d89b;
+  font-family: "Lora", "Noto Sans Thai", serif;
+  font-size: 23px;
+}
+.celestial-center-note {
+  fill: #a8bdd0;
+  font-size: 12px;
+}
+.celestial-corona {
+  transform-origin: 0 0;
+  animation: celestial-corona-turn 95s linear infinite;
+}
+.celestial-star-glow {
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.celestial-star.is-lit .celestial-star-glow {
+  opacity: 0.65;
+}
+.celestial-constellation-lines {
+  transition: stroke-opacity 0.65s;
+}
+.celestial-member-stars circle {
+  animation: celestial-member-arrival 0.7s ease-out both;
+}
+.celestial-solar-reveal {
+  display: none;
+}
+.celestial-comet-trail {
+  stroke-dasharray: 0.22 0.78;
+  stroke-dashoffset: 0.22;
+  animation: celestial-comet-flight 1.15s cubic-bezier(0.23, 0.45, 0.33, 1) both;
+}
+.celestial-comet {
+  animation: celestial-comet-fade 1.5s both;
+}
+.celestial-arrival-ring {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: celestial-arrival 0.55s 0.85s ease-out both;
+}
+.celestial-constellation.has-arrival .celestial-star-glow {
+  animation: celestial-star-arrival 0.65s 0.8s both;
+}
+.celestial-reveal .celestial-solar-reveal {
+  display: block;
+}
+.celestial-reveal .celestial-solar-reveal circle {
+  transform-origin: 500px 230px;
+  animation: celestial-solar-flare 2.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.celestial-reveal .celestial-solar-reveal circle:nth-child(2) {
+  animation-delay: 0.55s;
+}
+.celestial-reveal .celestial-constellation-lines {
+  stroke-dasharray: 1;
+  animation: celestial-draw 1.8s var(--reveal-delay) ease-in-out both;
+}
+.celestial-reveal .celestial-star.is-lit .celestial-star-glow {
+  animation: celestial-star-reveal 1.7s var(--reveal-delay) both;
+}
+.celestial-reveal .is-winner .celestial-team-aura {
+  opacity: 0.16;
+}
+.celestial-reveal .is-winner .celestial-team-label {
+  filter: drop-shadow(0 0 11px var(--star-color));
+}
+.celestial-crown {
+  animation: celestial-crown-arrival 1s 0.65s both;
+}
+.celestial-victory-burst path {
+  stroke-dasharray: 0.45 0.55;
+  animation: celestial-victory-ray 1.6s 0.15s ease-out both;
+}
+.lq-constellation-mark {
+  width: 37px;
+  height: 37px;
+  flex: 0 0 auto;
+  color: var(--team-color);
+}
+.lq-animated-score {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Entry: the atlas is the illustration, rather than another bordered panel. */
+.live-quiz.lq-entry {
+  max-width: 1260px;
+}
+.live-quiz .lq-entry-story {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 45% 68%,
+    #173b58,
+    #0b203b 53%,
+    #08172f
+  );
+  padding: 37px 40px 25px;
+}
+.live-quiz .lq-entry-story h1 {
+  font-size: clamp(34px, 3.1vw, 46px);
+  line-height: 1.23;
+  margin: 23px 0 18px;
+}
+.live-quiz .lq-entry-story > p {
+  max-width: 500px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #becddd;
+}
+.live-quiz .lq-entry-arena {
+  display: block;
+  max-width: none;
+  margin: 15px -24px 0;
+}
+.live-quiz .lq-entry-arena .celestial-arena {
+  background: transparent;
+}
+.live-quiz .lq-entry-arena .celestial-center-title {
+  font-size: 26px;
+}
+.live-quiz .lq-entry-arena .celestial-center-note {
+  display: none;
+}
+.live-quiz .lq-entry-facts {
+  position: relative;
+  color: #b6c7d9;
+  font-size: 12px;
+  gap: 17px;
+  margin-top: 15px;
+}
+.live-quiz .lq-entry-facts svg {
+  color: var(--starlight);
+}
+.live-quiz .lq-entry-foot {
+  color: #698394;
+}
+
+/* Lobby: the original four rosters and setup stay in place. */
+.live-quiz .lq-roster-heading > .lq-constellation-mark {
+  position: static;
+  margin-left: 0;
+  width: 38px;
+  height: 38px;
+}
+.live-quiz .lq-roster-heading small {
+  line-height: 1.7;
+}
+.live-quiz .lq-lobby-arena {
+  display: block;
+  max-width: none;
+  margin: 24px 0 0;
+  border: 1px solid #253e55;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--sky-deep);
+}
+.live-quiz .lq-lobby-arena .celestial-atlas {
+  max-height: 350px;
+}
+.live-quiz .lq-lobby-arena > p {
+  margin: 0;
+  padding: 0 18px 17px;
+  color: #adbed0;
+  font-size: 12px;
+  font-style: normal;
+  text-align: center;
+}
+
+/* The host sees participation, with no points or correctness before the finish. */
+.live-quiz.lq-host .lq-host-question {
+  min-height: 130px;
+  padding: 20px 5%;
+}
+.live-quiz.lq-host .lq-host-question h2 {
+  font-size: clamp(25px, 2.6vw, 36px);
+  line-height: 1.35;
+}
+.live-quiz.lq-host .lq-answer-board {
+  padding-bottom: 20px;
+}
+.live-quiz.lq-host .lq-answer-board .lq-answer-tile {
+  min-height: 76px;
+  padding: 14px 20px;
+}
+.live-quiz .lq-question-numeral .ancient-text {
+  color: #f4d8a2;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.15;
+}
+.live-quiz .lq-question-numeral .mayan-number,
+.live-quiz .lq-question-numeral .babylonian-number {
+  color: #f4d8a2;
+}
+.live-quiz .lq-response-arena {
+  display: block;
+  margin-top: 22px;
+  padding: 0;
+  overflow: hidden;
+  background: var(--sky-deep);
+  border: 1px solid #253e55;
+  border-radius: 12px;
+}
+.live-quiz .lq-response-lanes {
+  gap: 0;
+  padding: 17px 24px 0;
+}
+.live-quiz .lq-response-lane {
+  padding: 0 20px;
+  gap: 9px;
+  border-right: 1px solid #29415b;
+}
+.live-quiz .lq-response-lane:first-child {
+  padding-left: 0;
+}
+.live-quiz .lq-response-lane:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+.live-quiz .lq-response-lane:nth-child(1) {
+  --team-color: #ff929d;
+}
+.live-quiz .lq-response-lane:nth-child(2) {
+  --team-color: #60ded0;
+}
+.live-quiz .lq-response-lane:nth-child(3) {
+  --team-color: #f3cc75;
+}
+.live-quiz .lq-response-lane:nth-child(4) {
+  --team-color: #b5a3ff;
+}
+.live-quiz .lq-response-lane > span {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+}
+.live-quiz .lq-response-lane strong {
+  font-size: 14px;
+  color: #e5ecf3;
+}
+.live-quiz .lq-response-lane small {
+  font-size: 12px;
+  color: #b7c8d8;
+}
+.live-quiz .lq-response-lane .lq-constellation-mark {
+  width: 29px;
+  height: 29px;
+}
+.live-quiz .lq-response-lane .lq-lane-track {
+  height: 3px;
+  background: #253c53;
+  margin-top: 2px;
+}
+.live-quiz .lq-response-lane .lq-lane-track i {
+  box-shadow: 0 0 8px var(--team-color);
+}
+.live-quiz .lq-live-arena {
+  width: 100%;
+  max-width: none;
+}
+.live-quiz .lq-live-arena .celestial-atlas {
+  height: 250px;
+}
+.live-quiz .lq-live-arena .celestial-team-label text {
+  font-size: 21px;
+}
+.live-quiz .lq-live-arena .celestial-center-title {
+  font-size: 28px;
+}
+.live-quiz .lq-live-arena .celestial-team-detail,
+.live-quiz .lq-live-arena .celestial-center-note {
+  display: none;
+}
+.live-quiz .lq-response-arena > p {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: #adc0d1;
+  font-size: 12px;
+}
+
+/* A submitted answer is a star, never a green/red correctness signal. */
+.lq-submission-spark {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+.lq-submission-spark svg {
+  width: 100%;
+  height: 100%;
+  color: var(--team-color);
+  overflow: visible;
+}
+.lq-submission-spark circle {
+  fill: currentColor;
+}
+.lq-submission-spark .lq-spark-ring {
+  fill: none;
+  stroke: currentColor;
+  opacity: 0.35;
+  animation: celestial-submission-ring 1s ease-out both;
+}
+.lq-spark-trace {
+  stroke: currentColor;
+  opacity: 0.4;
+  stroke-width: 1.4;
+  stroke-dasharray: 75;
+  animation: celestial-spark-trace 0.65s both;
+}
+.lq-spark-star {
+  fill: currentColor;
+  transform-origin: center;
+  animation: celestial-spark-bloom 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.live-quiz .lq-player-instruction:has(.lq-submission-spark) {
+  padding-top: 12px;
+}
+.live-quiz .lq-player-instruction:has(.lq-submission-spark) h2 {
+  margin-top: 5px;
+}
+
+/* Results: one orchestrated flare, constellation drawing, and score reveal. */
+.live-quiz .lq-results-hero {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: minmax(270px, 0.85fr) minmax(0, 1.5fr);
+  gap: 4px;
+  border: 1px solid #2f465c;
+  border-radius: 14px;
+  background: var(--sky-deep);
+  padding: 29px 0 26px 35px;
+  margin-top: 23px;
+  color: #edf2f6;
+}
+.live-quiz .lq-results-hero > div:first-child {
+  position: relative;
+  z-index: 1;
+}
+.live-quiz .lq-results-hero > div:first-child > svg {
+  color: var(--starlight);
+  width: 31px;
+  margin-right: 8px;
+}
+.live-quiz .lq-results-hero > div:first-child > span {
+  color: #dec58b;
+  font-size: 13px;
+}
+.live-quiz .lq-results-hero h1 {
+  font-family: "Lora", "Noto Sans Thai", serif;
+  font-size: clamp(28px, 2.6vw, 40px);
+  line-height: 1.3;
+  color: #fff7df;
+  margin: 19px 0 14px;
+}
+.live-quiz .lq-results-hero p {
+  color: #b4c5d5;
+  font-size: 14px;
+  max-width: 390px;
+  line-height: 1.8;
+}
+.live-quiz .lq-own-result {
+  gap: 25px;
+  margin: 22px 0;
+}
+.live-quiz .lq-own-result > strong {
+  color: #f9e2ae;
+  font-size: 27px;
+}
+.live-quiz .lq-own-result small {
+  color: #b4c5d5;
+}
+.live-quiz .lq-result-actions {
+  gap: 8px;
+}
+.live-quiz .lq-result-actions .lq-primary {
+  background: #f1d89b;
+  color: #172b4d;
+  border-color: #f1d89b;
+}
+.live-quiz .lq-result-actions .lq-primary:hover {
+  background: #ffe9b6;
+}
+.live-quiz .lq-result-actions .lq-secondary {
+  background: #112941;
+  color: #e0eaf3;
+  border-color: #3c536a;
+}
+.live-quiz .lq-finish-arena {
+  min-width: 0;
+  padding: 0 12px;
+}
+.live-quiz .lq-finish-arena .celestial-arena {
+  background: radial-gradient(ellipse, #153552, #08172f 76%);
+}
+.live-quiz .lq-finish-arena .celestial-center-note {
+  display: none;
+}
+.live-quiz .lq-finish-arena .celestial-team-label text {
+  font-size: 20px;
+}
+.live-quiz .lq-finish-arena .celestial-team-detail > text:first-child {
+  font-size: 26px;
+}
+.live-quiz .lq-finish-arena .celestial-team-detail > text:last-child {
+  font-size: 14px;
+}
+.live-quiz .lq-team-result > .lq-constellation-mark {
+  color: var(--team-color);
+  width: 34px;
+  height: 34px;
+}
+.live-quiz .lq-team-result > .lq-constellation-mark + span {
+  display: flex;
+  flex-direction: column;
+}
+.live-quiz .lq-team-result:has(> svg:last-child) {
+  background: linear-gradient(90deg, transparent, #f4eddc);
+}
+.live-quiz .lq-results-grid {
+  gap: 48px;
+  padding-top: 30px;
+}
+
+.live-quiz .lq-celestial-podium {
+  list-style: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 0 0;
+  margin: 0 0 15px;
+  min-height: 235px;
+}
+.lq-podium-player {
+  flex: 1;
+  min-width: 0;
+  max-width: 175px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+.lq-podium-player > strong {
+  font-size: 13px;
+  width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 9px 0 3px;
+}
+.lq-podium-player > small {
+  font-size: 11px;
+  color: #6b7c89;
+  line-height: 1.2;
+}
+.live-quiz .lq-podium-player .lq-podium-streak {
+  color: #61778b;
+  font-size: 10px;
+  margin: 2px 0;
+}
+.live-quiz .lq-results-grid h2 + p,
+.live-quiz .lq-team-result small,
+.live-quiz .lq-leaderboard small {
+  color: #61778b;
+}
+.lq-podium-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid color-mix(in srgb, var(--team-color) 40%, white);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--team-color) 8%, #fdfcf9);
+}
+.lq-podium-rank-1 .lq-podium-emblem {
+  width: 59px;
+  height: 59px;
+  border-color: #c8a35a;
+  box-shadow: 0 0 30px #d1ae5225;
+}
+.lq-podium-crown {
+  position: absolute;
+  width: 26px;
+  height: 20px;
+  top: -18px;
+  color: #b58a27;
+}
+.lq-podium-score {
+  color: #455d72;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 3px 0 10px;
+}
+.lq-podium-plinth {
+  width: 100%;
+  height: 61px;
+  border-radius: 5px 5px 0 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #e0e8ef, #edf2f5);
+  border: 1px solid #cedae4;
+  border-bottom: 0;
+  transform-origin: bottom;
+  animation: celestial-podium-rise 1.1s var(--podium-delay)
+    cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.lq-podium-rank-1 .lq-podium-plinth {
+  height: 95px;
+  background: linear-gradient(135deg, #eee0b9, #faf3e3);
+  border-color: #dfc789;
+}
+.lq-podium-rank-3 .lq-podium-plinth {
+  height: 43px;
+  background: linear-gradient(135deg, #e9dbd2, #f5eee8);
+  border-color: #dfcbbd;
+}
+.lq-podium-plinth span {
+  font-family: "Lora", serif;
+  font-size: 31px;
+  color: #61788d;
+}
+.lq-podium-rank-1 .lq-podium-plinth span {
+  color: #9a7839;
+  font-size: 42px;
+}
+.lq-podium-rank-3 .lq-podium-plinth span {
+  color: #98765e;
+  font-size: 25px;
+}
+
+@keyframes celestial-corona-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes celestial-victory-ray {
+  0% {
+    stroke-dashoffset: 0.45;
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+@keyframes celestial-member-arrival {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes celestial-comet-flight {
+  0% {
+    stroke-dashoffset: 0.22;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0;
+  }
+}
+@keyframes celestial-comet-fade {
+  0%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes celestial-arrival {
+  from {
+    transform: scale(0.3);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+@keyframes celestial-star-arrival {
+  0% {
+    opacity: 0.45;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.65;
+  }
+}
+@keyframes celestial-solar-flare {
+  from {
+    opacity: 0.8;
+    transform: scale(0.8);
+    stroke-width: 2px;
+  }
+  to {
+    opacity: 0;
+    transform: scale(8);
+    stroke-width: 0.3px;
+  }
+}
+@keyframes celestial-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes celestial-star-reveal {
+  0% {
+    opacity: 0.05;
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.65;
+  }
+}
+@keyframes celestial-crown-arrival {
+  from {
+    opacity: 0;
+    transform: translateY(-9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes celestial-submission-ring {
+  from {
+    transform: scale(0.6);
+    opacity: 0.8;
+    transform-origin: 30px 30px;
+  }
+  to {
+    transform: scale(1.1);
+    opacity: 0.25;
+    transform-origin: 30px 30px;
+  }
+}
+@keyframes celestial-spark-trace {
+  from {
+    stroke-dashoffset: 75;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes celestial-spark-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.1) rotate(-60deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+@keyframes celestial-podium-rise {
+  from {
+    transform: scaleY(0.1);
+    opacity: 0.2;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1500px) {
+  .live-quiz .lq-live-arena .celestial-atlas {
+    height: 310px;
+  }
+}
+@media (min-width: 900px) and (max-height: 850px) {
+  .live-quiz.lq-host:fullscreen {
+    padding: 14px 3vw 18px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-toolbar {
+    padding-bottom: 10px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-round-meta {
+    margin: 12px 0;
+  }
+  .live-quiz.lq-host:fullscreen .lq-host-question {
+    min-height: 105px;
+    padding: 15px 5%;
+  }
+  .live-quiz.lq-host:fullscreen .lq-host-question h2 {
+    font-size: 30px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-answer-board .lq-answer-tile {
+    min-height: 64px;
+    padding: 10px 18px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-response-arena {
+    margin-top: 14px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-live-arena .celestial-atlas {
+    height: 190px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-response-lanes {
+    padding-top: 11px;
+  }
+  .live-quiz.lq-host:fullscreen .lq-response-arena > p {
+    padding-bottom: 12px;
+  }
+}
+@media (max-width: 1100px) {
+  .live-quiz .lq-response-lane {
+    padding: 0 12px;
+  }
+  .live-quiz .lq-response-lane > span {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .live-quiz .lq-results-hero {
+    grid-template-columns: 0.9fr 1.2fr;
+    padding-left: 26px;
+  }
+  .live-quiz .lq-result-actions .lq-primary,
+  .live-quiz .lq-result-actions .lq-secondary {
+    padding: 11px 14px;
+    font-size: 12px;
+  }
+}
+@media (max-width: 800px) {
+  .live-quiz .lq-entry-story {
+    padding: 28px 30px 23px;
+  }
+  .live-quiz .lq-entry-story h1 {
+    font-size: 36px;
+  }
+  .live-quiz .lq-entry-arena {
+    max-width: 550px;
+    margin: 5px auto 0;
+  }
+  .live-quiz .lq-entry-facts {
+    justify-content: center;
+  }
+  .live-quiz .lq-lobby-arena .celestial-atlas {
+    max-height: 300px;
+  }
+  .live-quiz.lq-player .lq-lobby-arena {
+    display: none;
+  }
+  .live-quiz .lq-live-arena .celestial-atlas {
+    height: 250px;
+  }
+  .live-quiz .lq-response-lanes {
+    padding: 15px 15px 0;
+  }
+  .live-quiz .lq-response-lane .lq-constellation-mark {
+    display: none;
+  }
+  .live-quiz .lq-results-hero {
+    grid-template-columns: 1fr;
+    padding: 27px 28px 10px;
+  }
+  .live-quiz .lq-results-hero p {
+    max-width: 560px;
+  }
+  .live-quiz .lq-finish-arena {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .live-quiz .lq-results-grid {
+    gap: 28px;
+  }
+}
+@media (max-width: 540px) {
+  .live-quiz .lq-entry-story {
+    padding: 25px 22px 20px;
+  }
+  .live-quiz .lq-entry-story h1 {
+    font-size: 30px;
+  }
+  .live-quiz .lq-entry-story > p {
+    font-size: 14px;
+  }
+  .live-quiz .lq-entry-arena {
+    margin: 3px -17px 0;
+  }
+  .live-quiz .lq-entry-facts {
+    gap: 8px;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 4px;
+    font-size: 12px;
+  }
+  .live-quiz .lq-lobby-arena {
+    margin-top: 19px;
+  }
+  .live-quiz .lq-lobby-arena > p {
+    font-size: 11px;
+    padding-bottom: 12px;
+  }
+  .live-quiz .lq-roster-heading > .lq-constellation-mark {
+    width: 31px;
+    height: 31px;
+  }
+  .live-quiz .lq-response-arena {
+    margin-top: 15px;
+  }
+  .live-quiz .lq-response-lanes {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 13px 12px 0;
+  }
+  .live-quiz .lq-response-lane {
+    padding: 0 8px;
+  }
+  .live-quiz .lq-response-lane strong {
+    font-size: 12px;
+  }
+  .live-quiz .lq-response-lane small {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .live-quiz .lq-live-arena .celestial-atlas {
+    height: auto;
+  }
+  .live-quiz .lq-response-arena > p {
+    font-size: 10px;
+    margin-top: 0;
+    padding: 0 12px 13px;
+  }
+  .live-quiz .lq-results-hero {
+    margin-top: 17px;
+    padding: 24px 19px 8px;
+  }
+  .live-quiz .lq-results-hero h1 {
+    font-size: 30px;
+    margin-top: 14px;
+  }
+  .live-quiz .lq-results-hero p {
+    font-size: 13px;
+  }
+  .live-quiz .lq-results-hero > div:first-child > span {
+    font-size: 12px;
+  }
+  .live-quiz .lq-results-hero > div:first-child > svg {
+    width: 25px;
+    margin-right: 6px;
+  }
+  .live-quiz .lq-own-result {
+    gap: 22px;
+  }
+  .live-quiz .lq-own-result > strong {
+    font-size: 23px;
+  }
+  .live-quiz .lq-own-result small {
+    font-size: 10px;
+  }
+  .live-quiz .lq-finish-arena {
+    margin: 10px -12px 0;
+    width: calc(100% + 24px);
+  }
+  .live-quiz .lq-finish-arena .celestial-team-label text {
+    font-size: 24px;
+  }
+  .live-quiz .lq-finish-arena .celestial-team-detail > text:first-child {
+    font-size: 30px;
+  }
+  .live-quiz .lq-finish-arena .celestial-team-detail > text:last-child {
+    font-size: 19px;
+  }
+  .live-quiz .lq-finish-arena .celestial-center-title {
+    font-size: 29px;
+  }
+  .live-quiz .lq-results-grid {
+    grid-template-columns: 1fr;
+  }
+  .live-quiz .lq-player-instruction:has(.lq-submission-spark) {
+    padding-top: 9px;
+  }
+  .lq-submission-spark {
+    height: 31px;
+    width: 31px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .celestial-arena *,
+  .lq-submission-spark *,
+  .lq-celestial-podium * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .celestial-solar-reveal {
+    display: none !important;
+  }
+  .celestial-reveal .celestial-constellation-lines {
+    stroke-dashoffset: 0;
+  }
+}
