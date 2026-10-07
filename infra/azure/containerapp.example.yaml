@@ -1,0 +1,52 @@
+properties:
+  configuration:
+    activeRevisionsMode: single
+    ingress:
+      external: true
+      targetPort: 80
+      allowInsecure: false
+      transport: auto
+    secrets:
+      - name: postgres-url
+        value: REPLACE_WITH_POSTGRES_CONNECTION_URL
+      - name: mongo-url
+        value: REPLACE_WITH_COSMOS_MONGO_CONNECTION_URL
+  template:
+    containers:
+      - name: web
+        image: REPLACE_WITH_PUBLIC_GHCR_WEB_IMAGE_AND_SHA_TAG
+        resources:
+          cpu: 0.25
+          memory: 0.5Gi
+      - name: api
+        image: REPLACE_WITH_PUBLIC_GHCR_API_IMAGE_AND_SHA_TAG
+        command:
+          - uvicorn
+        args:
+          - app.main:app
+          - --host
+          - 0.0.0.0
+          - --port
+          - "8000"
+          - --workers
+          - "1"
+          - --no-access-log
+        env:
+          - name: APP_ENV
+            value: production
+          - name: DATABASE_URL
+            secretRef: postgres-url
+          - name: MONGO_URL
+            secretRef: mongo-url
+          - name: MONGO_DB
+            value: zodiac
+          - name: COOKIE_SECURE
+            value: "true"
+          - name: ALLOWED_ORIGINS
+            value: REPLACE_WITH_HTTPS_CONTAINER_APP_ORIGIN
+        resources:
+          cpu: 0.75
+          memory: 1.5Gi
+    scale:
+      minReplicas: 0
+      maxReplicas: 1

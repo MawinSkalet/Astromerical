@@ -1,0 +1,34 @@
+properties:
+  configuration:
+    triggerType: Manual
+    replicaTimeout: 1800
+    replicaRetryLimit: 0
+    manualTriggerConfig:
+      parallelism: 1
+      replicaCompletionCount: 1
+    secrets:
+      - name: postgres-url
+        value: REPLACE_WITH_POSTGRES_CONNECTION_URL
+      - name: mongo-url
+        value: REPLACE_WITH_COSMOS_MONGO_CONNECTION_URL
+  template:
+    containers:
+      - name: migrate
+        image: REPLACE_WITH_PUBLIC_GHCR_API_IMAGE_AND_SHA_TAG
+        command:
+          - sh
+          - -c
+        args:
+          - alembic upgrade head && python -m app.seed
+        env:
+          - name: APP_ENV
+            value: production
+          - name: DATABASE_URL
+            secretRef: postgres-url
+          - name: MONGO_URL
+            secretRef: mongo-url
+          - name: MONGO_DB
+            value: zodiac
+        resources:
+          cpu: 0.25
+          memory: 0.5Gi
