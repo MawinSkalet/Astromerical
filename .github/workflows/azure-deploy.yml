@@ -1,0 +1,139 @@
+name: Build and deploy to Azure Container Apps
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: azure-production
+  cancel-in-progress: false
+
+jobs:
+  build-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install -r backend/requirements.txt
+      - run: python -m pytest
+
+      - name: Set lowercase GHCR image prefix
+        id: images
+        run: |
+          IMAGE_REPOSITORY="${GITHUB_REPOSITORY,,}"
+          echo "prefix=ghcr.io/${IMAGE_REPOSITORY}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.images.outputs.prefix }}-web:${{ github.sha }}
+          build-args: API_UPSTREAM=127.0.0.1:8000
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.images.outputs.prefix }}-api:${{ github.sha }}
+
+      - name: Log in to Azure with GitHub OIDC
+        if: vars.AZURE_DEPLOY_ENABLED == 'true'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install or update Azure Container Apps CLI extension
+        if: vars.AZURE_DEPLOY_ENABLED == 'true'
+        run: az extension add --name containerapp --upgrade
+
+      - name: Run database migrations and seed data
+        if: vars.AZURE_DEPLOY_ENABLED == 'true'
+        env:
+          AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+          AZURE_MIGRATION_JOB_NAME: ${{ vars.AZURE_MIGRATION_JOB_NAME }}
+          IMAGE_PREFIX: ${{ steps.images.outputs.prefix }}
+        run: |
+          API_IMAGE="${IMAGE_PREFIX}-api:${GITHUB_SHA}"
+          az containerapp job update \
+            --name "$AZURE_MIGRATION_JOB_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --container-name migrate \
+            --image "$API_IMAGE"
+          EXECUTION_NAME=$(az containerapp job start \
+            --name "$AZURE_MIGRATION_JOB_NAME" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query name --output tsv)
+          if [ -z "$EXECUTION_NAME" ]; then
+            echo "Azure did not return a migration execution name." >&2
+            exit 1
+          fi
+          for attempt in $(seq 1 120); do
+            STATUS=$(az containerapp job execution show \
+              --name "$AZURE_MIGRATION_JOB_NAME" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --job-execution-name "$EXECUTION_NAME" \
+              --query properties.status --output tsv)
+            case "$STATUS" in
+              Succeeded) exit 0 ;;
+              Failed|Stopped)
+                echo "Database migration job finished with status: $STATUS" >&2
+                exit 1
+                ;;
+            esac
+            sleep 5
+          done
+          echo "Timed out waiting for database migration job." >&2
+          exit 1
+
+      - name: Deploy API image
+        if: vars.AZURE_DEPLOY_ENABLED == 'true'
+        env:
+          AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+          AZURE_CONTAINER_APP_NAME: ${{ vars.AZURE_CONTAINER_APP_NAME }}
+          IMAGE_PREFIX: ${{ steps.images.outputs.prefix }}
+        run: >-
+          az containerapp update
+          --name "$AZURE_CONTAINER_APP_NAME"
+          --resource-group "$AZURE_RESOURCE_GROUP"
+          --container-name api
+          --image "${IMAGE_PREFIX}-api:${GITHUB_SHA}"
+
+      - name: Deploy web image
+        if: vars.AZURE_DEPLOY_ENABLED == 'true'
+        env:
+          AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+          AZURE_CONTAINER_APP_NAME: ${{ vars.AZURE_CONTAINER_APP_NAME }}
+          IMAGE_PREFIX: ${{ steps.images.outputs.prefix }}
+        run: >-
+          az containerapp update
+          --name "$AZURE_CONTAINER_APP_NAME"
+          --resource-group "$AZURE_RESOURCE_GROUP"
+          --container-name web
+          --image "${IMAGE_PREFIX}-web:${GITHUB_SHA}"
