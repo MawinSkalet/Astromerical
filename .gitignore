@@ -8,5 +8,6 @@ __pycache__/
 *.db
 *.db-*
 .env
+infra/azure/*.local.yaml
 tmp/
 test-results/
