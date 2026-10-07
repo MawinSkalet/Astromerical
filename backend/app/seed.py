@@ -28,12 +28,16 @@ def _bulk_write_in_chunks(collection, operations, *, batch_size=10, pause_second
                 sleep(min(max(pause_seconds,retry_after_ms/1000)*(2**attempt),5.0))
         if offset+batch_size<len(operations):sleep(pause_seconds)
 
+def _ensure_question_id_index(collection):
+    # Cosmos Mongo cannot add a unique secondary index after documents exist.
+    if collection.find_one({}, {'_id':1}) is None:collection.create_index('id',unique=True)
+
 def seed():
     create_schema()
     if mongo is not None:
         _bulk_write_in_chunks(mongo.lesson_modules,[ReplaceOne({'slug':x['slug']},x|{'version':1},upsert=True) for x in LESSONS])
+        _ensure_question_id_index(mongo.question_bank)
         _bulk_write_in_chunks(mongo.question_bank,[ReplaceOne({'id':x['id']},x,upsert=True) for x in generated_bank()])
-        mongo.question_bank.create_index('id',unique=True)
     elif not __import__('os').getenv('APP_ENV','development')=='development':raise RuntimeError('MongoDB is required for production seeding.')
     with transaction() as db:
         for i in range(120):

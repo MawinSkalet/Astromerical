@@ -38,3 +38,22 @@ def test_seed_does_not_retry_non_throttling_bulk_errors(monkeypatch):
         seed._bulk_write_in_chunks(Collection(), [1, 2], batch_size=10)
 
     assert calls == [[1, 2]]
+
+
+@pytest.mark.parametrize(('existing_document', 'creates_index'), [(False, True), (True, False)])
+def test_seed_creates_unique_id_index_only_before_first_document(existing_document, creates_index):
+    seed = importlib.import_module('app.seed')
+    calls = []
+
+    class Collection:
+        def find_one(self, query, projection):
+            calls.append(('find', query, projection))
+            return {'_id': 'existing'} if existing_document else None
+
+        def create_index(self, field, unique):
+            calls.append(('index', field, unique))
+
+    seed._ensure_question_id_index(Collection())
+
+    assert calls[0] == ('find', {}, {'_id': 1})
+    assert (('index', 'id', True) in calls) is creates_index
