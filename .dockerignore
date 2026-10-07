@@ -1,0 +1,12 @@
+node_modules
+.pytest_cache
+**/.pytest_cache
+.venv
+.git
+dist
+tmp
+test-results
+*.db
+*.db-*
+.env
+**/__pycache__

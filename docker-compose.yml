@@ -1,0 +1,88 @@
+name: zodiac-numerals
+x-api-environment: &api-environment
+  APP_ENV: production
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: ${POSTGRES_USER:-zodiac}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env and set POSTGRES_PASSWORD}
+  POSTGRES_DB: ${POSTGRES_DB:-zodiac}
+  MONGO_HOST: mongo
+  MONGO_USER: ${MONGO_USER:-zodiac}
+  MONGO_PASSWORD: ${MONGO_PASSWORD:?Set MONGO_PASSWORD in .env}
+  MONGO_DB: ${MONGO_DB:-zodiac}
+  COOKIE_SECURE: ${COOKIE_SECURE:-false}
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080,http://localhost:5173,http://127.0.0.1:5173}
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zodiac}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-zodiac}
+    ports: ["127.0.0.1:${POSTGRES_PORT:-5432}:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-zodiac}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    ports: ["127.0.0.1:${MONGO_PORT:-27017}:27017"]
+    volumes: ["mongo_data:/data/db"]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'mongosh --quiet --eval ''db.getSiblingDB("admin").auth(process.env.MONGO_INITDB_ROOT_USERNAME, process.env.MONGO_INITDB_ROOT_PASSWORD); db.adminCommand({ping:1})''',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  seed:
+    build: ./backend
+    environment: *api-environment
+    command: ["sh", "-c", "alembic upgrade head && python -m app.seed"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      mongo: { condition: service_healthy }
+    restart: "no"
+  api:
+    build: ./backend
+    environment:
+      <<: *api-environment
+      AI_PROVIDER_KEY: ${AI_PROVIDER_KEY:-}
+      AI_PROVIDER_MODEL: ${AI_PROVIDER_MODEL:-gpt-4.1-mini}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:-}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY:-}
+      AZURE_OPENAI_DEPLOYMENT: ${AZURE_OPENAI_DEPLOYMENT:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-minimax/minimax-m3:free}
+      OPENROUTER_TUTOR_MODEL: ${OPENROUTER_TUTOR_MODEL:-qwen/qwen3.8-27b:free}
+      OPENROUTER_TUTOR_FALLBACK_MODELS: ${OPENROUTER_TUTOR_FALLBACK_MODELS:-google/gemma-4-31b-it:free,nvidia/nemotron-3.5-lightning:free}
+    ports: ["127.0.0.1:${API_PORT:-8000}:8000"]
+    depends_on:
+      seed: { condition: service_completed_successfully }
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+  web:
+    build: .
+    ports: ["127.0.0.1:${WEB_PORT:-8080}:80"]
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  mongo_data:
