@@ -1,19 +1,38 @@
 """Idempotent, deterministic classroom data, never birth details or chat payloads."""
 from uuid import uuid5, NAMESPACE_URL
 from datetime import datetime,timezone,timedelta
+from re import search
+from time import sleep
 from sqlalchemy import select,func
 from pymongo import ReplaceOne
+from pymongo.errors import BulkWriteError
 from .db import create_schema,transaction,mongo
 from .models import User,LessonProgress,GameRun,GameAttempt
 from .content import LESSONS,generated_bank,make_activity
 
 def seed_id(value):return str(uuid5(NAMESPACE_URL,'zodiac-numerals-seed:'+value))
 
+def _bulk_write_in_chunks(collection, operations, *, batch_size=10, pause_seconds=0.3, max_retries=5):
+    """Pace deterministic upserts for low-throughput Cosmos Mongo accounts."""
+    for offset in range(0,len(operations),batch_size):
+        batch=operations[offset:offset+batch_size]
+        for attempt in range(max_retries+1):
+            try:
+                collection.bulk_write(batch)
+                break
+            except BulkWriteError as error:
+                write_errors=error.details.get('writeErrors',[])
+                if not write_errors or any(item.get('code')!=16500 for item in write_errors) or attempt==max_retries:
+                    raise
+                retry_after_ms=max((int(match.group(1)) for item in write_errors if (match:=search(r'RetryAfterMs=(\d+)',item.get('errmsg','')))),default=0)
+                sleep(min(max(pause_seconds,retry_after_ms/1000)*(2**attempt),5.0))
+        if offset+batch_size<len(operations):sleep(pause_seconds)
+
 def seed():
     create_schema()
     if mongo is not None:
-        mongo.lesson_modules.bulk_write([ReplaceOne({'slug':x['slug']},x|{'version':1},upsert=True) for x in LESSONS])
-        mongo.question_bank.bulk_write([ReplaceOne({'id':x['id']},x,upsert=True) for x in generated_bank()])
+        _bulk_write_in_chunks(mongo.lesson_modules,[ReplaceOne({'slug':x['slug']},x|{'version':1},upsert=True) for x in LESSONS])
+        _bulk_write_in_chunks(mongo.question_bank,[ReplaceOne({'id':x['id']},x,upsert=True) for x in generated_bank()])
         mongo.question_bank.create_index('id',unique=True)
     elif not __import__('os').getenv('APP_ENV','development')=='development':raise RuntimeError('MongoDB is required for production seeding.')
     with transaction() as db:
