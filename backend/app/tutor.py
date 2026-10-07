@@ -32,7 +32,7 @@ WORD_PATTERN=re.compile(r'[a-z0-9]+')
 THAI_PATTERN=re.compile(r'[\u0e00-\u0e7f]+')
 ROMAN_IDENTIFIER=re.compile(r'^[ivxlcdm]{2,}$')
 STOP_WORDS={
-    'a','an','and','are','as','at','be','can','could','did','do','does','for','from','give','how','in','is','it','me','of','on','or','please','should','tell','that','the','their','this','to','was','what','when','where','which','who','why','with','would',
+    'a','an','and','are','as','at','be','can','could','did','do','does','for','from','give','how','in','is','it','me','of','on','or','please','should','tell','that','the','their','this','to','was','what','when','where','which','who','why','with','would','you','your',
     'คือ','อะไร','อย่างไร','ทำไม','และ','หรือ','ไหม','ได้ไหม','ช่วย','หน่อย','อธิบาย','บอก','ให้','ของ','ที่','เป็น','มี','จาก','ใน','เกี่ยวกับ','แบบ','ไหน','ใด','อย่าง','ด้วย','ยังไง',
 }
 THAI_STOP_NGRAMS={'คือ','อะไร','และ','หรือ','ไหม','ได้','ไหม','ของ','ที่','เป็น','มี','จาก','ใน','ให้','กับ','แบบ','ไหน','ใด','อย่าง','ด้วย','ทำไม','ช่วย','หน่อย','เกี่ยว','กับ'}
@@ -170,10 +170,10 @@ def course_guide_answer(chunks,lessons,language,notice=None,question=None):
     if not chunks:
         if language=='th':
             topics=' · '.join(lesson.get('title_th',lesson.get('title','')) for lesson in lessons)
-            answer=f'ฉันช่วยค้นได้จากทุกบทเรียน: {topics} ลองถามเป็นคำถามเฉพาะ เช่น “XIV แทนเลขอะไร” หรือ “ลัคนาคืออะไร”'
+            answer=f'ฉันไม่พบข้อมูลพอจะตอบจากเนื้อหาบทเรียนที่ค้นได้ หัวข้อที่ค้นได้: {topics} ลองถามคำถามที่เกี่ยวกับบทเรียน เช่น “XIV แทนเลขอะไร” หรือ “ลัคนาคืออะไร”'
         else:
             topics=' · '.join(lesson.get('title','') for lesson in lessons)
-            answer=f'I can search across all lessons: {topics}. Try a specific question, such as “What does XIV represent?” or “What is the ascendant?”'
+            answer=f'I don’t know from the available course material. Searchable topics: {topics}. Try a course question, such as “What does XIV represent?” or “What is the ascendant?”'
     else:
         paragraphs=[]
         for chunk in answer_chunks:
