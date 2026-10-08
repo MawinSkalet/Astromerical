@@ -19,6 +19,10 @@ const point = (r: number, a: number) => ({
   x: 250 + r * Math.cos((a * Math.PI) / 180),
   y: 250 + r * Math.sin((a * Math.PI) / 180),
 });
+// SVG's y-axis points down, so decreasing angles follow the zodiac
+// counterclockwise. Aries is centred at the top; 0° starts at its right edge.
+const zodiacAngle = (index: number, degree = 15) =>
+  -90 - (index * 30 + degree - 15);
 export function SunSeal({ size = 46 }: { size?: number }) {
   return (
     <svg
@@ -89,7 +93,7 @@ export function ZodiacWheel({
           <circle key={r} cx="250" cy="250" r={r} className="wheel-ring" />
         ))}
         {signs.map((sign, i) => {
-          const angle = -90 + i * 30;
+          const angle = zodiacAngle(i);
           const a = point(160, angle - 15),
             b = point(160, angle + 15),
             c = point(53, angle + 15),
@@ -152,9 +156,14 @@ export function ZodiacWheel({
           <SunSeal size={60} />
         </g>
         {placements.map((p, i) => {
-          const pos = point(75, -90 + (p.index + (p.degree / 30 - 0.5)) * 30);
+          const pos = point(75, zodiacAngle(p.index, p.degree));
           return (
-            <g key={p.body}>
+            <g
+              key={p.body}
+              className="wheel-placement"
+              role="img"
+              aria-label={`${p.body}: ${language === "th" ? p.sign_th : p.sign}, ${p.degree}°`}
+            >
               <circle
                 cx={pos.x}
                 cy={pos.y}
