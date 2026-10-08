@@ -53,7 +53,7 @@ def advance(db,room,clock=None):
     session=db.get(QuizSession,room.session_id)
     now=time.time() if clock is None else clock
     changed=False
-    # Every question keeps its full answering window, even if everyone submits.
+    # Full deadlines remain the default; only the host can end a phase early.
     total=db.scalar(select(func.count()).select_from(SessionQuestion).where(SessionQuestion.session_id==session.id))
     while not session.finished and now>=session.ends_at:
         changed=True
@@ -230,6 +230,29 @@ async def start(code:str,data:StartInput|None=None,user=Depends(current_user)):
             team.locked_size=sum(p.team_id==team.id for p in people)
             db.add(TeamScore(id=uid(),session_id=session.id,team_id=team.id,correct=0))
         for i,question in enumerate(questions): db.add(SessionQuestion(id=uid(),session_id=session.id,position=i,snapshot=question|{'quiz_category':category}))
+        db.flush(); result=snapshot(db,room,user)
+    await broadcast(code)
+    return result
+
+class SkipInput(BaseModel):
+    question_id:str=Field(min_length=1,max_length=36)
+    phase:Literal['preview','question','reveal']
+
+@router.post('/rooms/{code}/skip')
+async def skip(code:str,data:SkipInput,user=Depends(current_user)):
+    with lock,transaction() as db:
+        room=room_by_code(db,code)
+        if room.host_id!=user['id']: raise HTTPException(403,'Only the host can advance the question.')
+        if room.status!='active': raise HTTPException(409,'There is no active question.')
+        now=time.time()
+        advance(db,room,clock=now)
+        session=db.get(QuizSession,room.session_id)
+        question=current_question(db,session)
+        # Bind a click to exactly one question and phase. Duplicate requests or
+        # a click racing the timer must never skip the following phase/question.
+        if room.status=='active' and question.id==data.question_id and session.phase==data.phase:
+            session.ends_at=now
+            advance(db,room,clock=now)
         db.flush(); result=snapshot(db,room,user)
     await broadcast(code)
     return result

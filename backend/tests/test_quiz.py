@@ -188,6 +188,85 @@ def test_last_question_gets_full_reveal_before_final_rankings(client):
     done=client.get(f'/api/quiz/rooms/{code}').json()
     assert done['leaderboard'] and 'review' not in done and 'reveal' not in done
 
+def test_host_skip_reveals_to_players_preserves_scores_and_rejects_late_answers(client):
+    host,code=host_room(client)
+    right,user=add_player(code,'Answered')
+    absent,_=add_player(code,'Still thinking')
+    state=client.post(f'/api/quiz/rooms/{code}/start').json()
+    question,started,end=open_question(state)
+    index=question.snapshot['choices'].index(question.snapshot['answer'])
+    submit_answer(code,AnswerInput(question_id=question.id,choice_index=index),user,clock=started+0.5)
+    with transaction() as db: points=db.scalar(select(QuizAnswer.points))
+    with right.websocket_connect(f'/api/quiz/rooms/{code}/ws',headers=ORIGIN) as ws:
+        assert next_event(ws,'room_state')['state']['phase']=='question'
+        payload={'question_id':question.id,'phase':'question'}
+        response=client.post(f'/api/quiz/rooms/{code}/skip',json=payload)
+        assert response.status_code==200
+        revealed=response.json()
+        assert revealed['phase']=='reveal' and revealed['question_number']==1
+        assert revealed['starts_at']<int(end*1000)
+        assert revealed['ends_at']-revealed['starts_at']==REVEAL_SECONDS*1000
+        update=next_event(ws,'room_state',lambda message:message['state']['phase']=='reveal')['state']
+        assert update['question'] is None and update['reveal']['correct'] is True
+        assert update['reveal']['points']==points and sum(update['reveal']['answer_counts'])==1
+        # Retrying the same click must not bypass the answer explanation.
+        repeated=client.post(f'/api/quiz/rooms/{code}/skip',json=payload).json()
+        assert repeated['phase']=='reveal' and repeated['ends_at']==revealed['ends_at']
+    assert absent.post(f'/api/quiz/rooms/{code}/answers',json={'question_id':question.id,'choice_index':index}).status_code==409
+    missed=absent.get(f'/api/quiz/rooms/{code}').json()['reveal']
+    assert missed['submitted_index'] is None and missed['points']==0
+    with transaction() as db:
+        assert db.scalar(select(func.count()).select_from(QuizAnswer))==1
+        assert db.scalar(select(QuizAnswer.points))==points
+    next_state=client.post(f'/api/quiz/rooms/{code}/skip',json={'question_id':question.id,'phase':'reveal'}).json()
+    assert next_state['phase']=='preview' and next_state['question_number']==2
+    assert 'reveal' not in next_state and all(team['points']==0 for team in next_state['teams'])
+    stale=client.post(f'/api/quiz/rooms/{code}/skip',json=payload).json()
+    assert stale['question_id']==next_state['question_id'] and stale['ends_at']==next_state['ends_at']
+
+def test_skip_is_host_only_and_timer_races_do_not_skip_two_phases(client):
+    host,code=host_room(client); player,_=add_player(code)
+    payload={'question_id':'not-started','phase':'preview'}
+    assert player.post(f'/api/quiz/rooms/{code}/skip',json=payload).status_code==403
+    assert client.post(f'/api/quiz/rooms/{code}/skip',json=payload).status_code==409
+    state=client.post(f'/api/quiz/rooms/{code}/start').json()
+    payload['question_id']=state['question_id']
+    assert player.post(f'/api/quiz/rooms/{code}/skip',json=payload).status_code==403
+    assert client.post(f'/api/quiz/rooms/{code}/skip',json=payload|{'phase':'finished'}).status_code==422
+    answering=client.post(f'/api/quiz/rooms/{code}/skip',json=payload).json()
+    assert answering['phase']=='question' and answering['question_id']==state['question_id']
+    assert answering['ends_at']-answering['starts_at']==QUESTION_SECONDS*1000
+    repeated=client.post(f'/api/quiz/rooms/{code}/skip',json=payload).json()
+    assert repeated['phase']=='question' and repeated['ends_at']==answering['ends_at']
+    with transaction() as db:
+        session=db.get(QuizSession,state['session_id'])
+        session.ends_at=time.time()-0.01
+        expired=session.ends_at
+    # The natural deadline wins. An old answering click cannot skip the reveal.
+    revealed=client.post(f'/api/quiz/rooms/{code}/skip',json=payload|{'phase':'question'}).json()
+    assert revealed['phase']=='reveal' and revealed['question_number']==1
+    assert revealed['ends_at']==int((expired+REVEAL_SECONDS)*1000)
+
+def test_skip_last_question_reveals_then_finishes_with_existing_scores(client):
+    host,code=host_room(client); player,user=add_player(code)
+    state=client.post(f'/api/quiz/rooms/{code}/start').json()
+    question,started,end=open_question(state)
+    submit_answer(code,AnswerInput(question_id=question.id,answer=question.snapshot['answer']),user,clock=started+10)
+    with transaction() as db:
+        session=db.get(QuizSession,state['session_id'])
+        session.current_question=9
+        session.phase='question'; session.starts_at=time.time()-1; session.ends_at=session.starts_at+QUESTION_SECONDS
+    last=client.get(f'/api/quiz/rooms/{code}').json()
+    payload={'question_id':last['question_id'],'phase':'question'}
+    revealed=client.post(f'/api/quiz/rooms/{code}/skip',json=payload).json()
+    assert revealed['status']=='active' and revealed['phase']=='reveal' and 'leaderboard' not in revealed
+    assert revealed['reveal']['answer']
+    done=client.post(f'/api/quiz/rooms/{code}/skip',json=payload|{'phase':'reveal'}).json()
+    assert done['status']=='finished' and done['phase']=='finished'
+    assert 'reveal' not in done and done['leaderboard'][0]['points']==750
+    assert done['leaderboard'][0]['correct']==1
+    assert player.get(f'/api/quiz/rooms/{code}').json()['status']=='finished'
+
 def test_simultaneous_answers_balanced_final_scores_and_rankings(client):
     host,code=host_room(client)
     users=[]; clients=[]

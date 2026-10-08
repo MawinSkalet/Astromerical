@@ -25,7 +25,7 @@ export function QuizReveal({
     >
       <div className="lq-reveal-kicker">
         <Sparkles size={18} />
-        {b("Time’s up · answer revealed", "หมดเวลา · เปิดเฉลย")}
+        {b("Answer revealed", "เปิดเฉลย")}
       </div>
       <p className="lq-reveal-prompt">
         {th ? reveal.prompt_th || reveal.prompt : reveal.prompt}

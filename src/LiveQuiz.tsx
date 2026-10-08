@@ -12,6 +12,7 @@ import {
   Maximize2,
   Minimize2,
   Monitor,
+  SkipForward,
   Smartphone,
   Sparkles,
   Star,
@@ -822,13 +823,48 @@ export function LiveQuiz({ code, lang, user, go, notify }: Props) {
               </strong>
               <span className="lq-topic">{categoryName(room.category)}</span>
             </span>
-            <span>
-              {room.phase === "preview"
-                ? b("Get ready", "เตรียมตัว")
-                : room.phase === "reveal"
-                  ? b("Answer revealed", "ช่วงเฉลย")
-                  : b("Answers are open", "เปิดให้ตอบแล้ว")}
-            </span>
+            <div className="lq-round-actions">
+              <span>
+                {room.phase === "preview"
+                  ? b("Get ready", "เตรียมตัว")
+                  : room.phase === "reveal"
+                    ? b("Answer revealed", "ช่วงเฉลย")
+                    : b("Answers are open", "เปิดให้ตอบแล้ว")}
+              </span>
+              {room.host && (
+                <button
+                  className="lq-skip-button"
+                  disabled={busy || connection !== "connected" || seconds === 0}
+                  title={
+                    room.phase === "question"
+                      ? b(
+                          "End answering and reveal the answer",
+                          "จบเวลาตอบและเปิดเฉลยทันที",
+                        )
+                      : undefined
+                  }
+                  onClick={() =>
+                    action("skip", "POST", {
+                      question_id: room.question_id,
+                      phase: room.phase,
+                    })
+                  }
+                >
+                  {busy ? (
+                    <LoaderCircle className="spin" size={17} />
+                  ) : (
+                    <SkipForward size={17} />
+                  )}
+                  {room.phase === "preview"
+                    ? b("Start answers", "เริ่มตอบ")
+                    : room.phase === "question"
+                      ? b("Skip", "เฉลยเลย")
+                      : room.question_number === room.total
+                        ? b("Show results", "ดูผลการแข่งขัน")
+                        : b("Next question", "ข้อถัดไป")}
+                </button>
+              )}
+            </div>
           </div>
           <section
             className={`lq-game-stage ${seconds <= 5 && room.phase === "question" ? "is-urgent" : ""}`}

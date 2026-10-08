@@ -648,11 +648,49 @@
 }
 .lq-round-meta {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   align-items: center;
   justify-content: space-between;
   margin: 18px 0 12px;
   font-size: 13px;
   color: #6c7a8a;
+}
+.lq-round-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+.lq-skip-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px 16px;
+  border: 1px solid #b8d5d4;
+  border-radius: 8px;
+  background: #edf7f5;
+  color: #086d78;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.lq-skip-button:hover:not(:disabled) {
+  background: #dcefeb;
+  border-color: #087f8c;
+}
+.lq-skip-button:focus-visible {
+  outline: 3px solid #087f8c;
+  outline-offset: 3px;
+}
+.lq-skip-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
 }
 .lq-round-meta > span:first-child {
   display: flex;
@@ -1610,6 +1648,13 @@
   }
   .lq-round-meta > span:last-child {
     font-size: 10px;
+  }
+  .lq-presenter .lq-round-actions > span {
+    display: none;
+  }
+  .lq-skip-button {
+    padding: 8px 12px;
+    font-size: 12px;
   }
   .lq-stage-top {
     padding: 13px 13px 11px;
